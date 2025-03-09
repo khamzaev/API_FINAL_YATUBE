@@ -95,22 +95,22 @@ class Follow(models.Model):
         following: Пользователь, на которого подписываются.
     """
     user = models.ForeignKey(
-        User, related_name='follower',
-        on_delete=models.CASCADE
-    )
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='Подписчик', )
     following = models.ForeignKey(
-        User, related_name='following',
-        on_delete=models.CASCADE
-    )
+        User,
+        on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Подписан', )
 
     class Meta:
-        unique_together = ('user', 'following')
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
                 fields=('user', 'following'),
                 name='unique_follow'
-            )
-        ]
+            ),)
 
     def __str__(self):
         return f"{self.user} подписан на {self.following}"
