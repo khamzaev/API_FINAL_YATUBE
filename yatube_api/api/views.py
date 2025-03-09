@@ -1,7 +1,6 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters, mixins
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 from posts.models import Comment, Group, Post, Follow
 from .permissions import IsAuthorOrReadOnly
@@ -52,28 +51,20 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthorOrReadOnly]
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class FollowViewSet(mixins.CreateModelMixin,
+                    mixins.ListModelMixin,
+                    viewsets.GenericViewSet):
     """
     Набор представлений для просмотра и
     редактирования экземпляров Follow.
     """
     serializer_class = FollowSerializer
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAuthenticated]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('following__username',)
 
     def get_queryset(self):
-        return Follow.objects.filter(user=self.request.user)
+        return self.request.user.follower.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    @action(detail=False, methods=['get'], url_path='search')
-    def search(self, request):
-        following_username = request.query_params.get('search', None)
-        if following_username is not None:
-            queryset = self.get_queryset().filter(
-                following__username__icontains=following_username
-            )
-        else:
-            queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
