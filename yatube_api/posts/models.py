@@ -25,6 +25,7 @@ class Group(models.Model):
     def __str__(self):
         return self.title
 
+
 class Post(models.Model):
     """
     Модель для представления публикации.
@@ -58,6 +59,7 @@ class Post(models.Model):
     def __str__(self):
         return self.text
 
+
 class Comment(models.Model):
     """
     Модель для представления комментария к публикации.
@@ -82,6 +84,7 @@ class Comment(models.Model):
         auto_now_add=True,
         db_index=True
     )
+
 
 class Follow(models.Model):
     """
