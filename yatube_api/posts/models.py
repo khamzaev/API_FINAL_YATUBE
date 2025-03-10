@@ -120,10 +120,6 @@ class Follow(models.Model):
                 fields=('user', 'following'),
                 name='unique_follow'
             ),
-            models.CheckConstraint(
-                check=~models.Q(user=models.F('following')),
-                name='check_not_self_follow',
-            ),
         )
 
     def __str__(self):
