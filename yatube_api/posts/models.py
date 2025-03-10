@@ -11,7 +11,7 @@ class Group(models.Model):
 
     Атрибуты:
         title: Название сообщества.
-        slug: Уникальный идентификатор сообщества (URL-friendly).
+        slug: Уникальный идентификатор сообщества (URL friendly).
         description: Описание сообщества.
     """
     title = models.CharField(
