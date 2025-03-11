@@ -164,3 +164,6 @@ Authorization: Bearer <your_token>
     ...
 ]
 ```
+### Автор Проекта
+
+Джамал Хамзаев

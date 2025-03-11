@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from .constants import MAX_LENGTH_TITLE
+
 
 User = get_user_model()
 
@@ -15,7 +17,7 @@ class Group(models.Model):
         description: Описание сообщества.
     """
     title = models.CharField(
-        max_length=200
+        max_length=MAX_LENGTH_TITLE
     )
     slug = models.SlugField(
         unique=True
@@ -94,6 +96,14 @@ class Comment(models.Model):
         db_index=True
     )
 
+    class Meta:
+        verbose_name = 'Comment'
+        verbose_name_plural = 'Comments'
+        ordering = ('-created',)
+
+    def __str__(self):
+        return self.text[:20]
+
 
 class Follow(models.Model):
     """
@@ -115,10 +125,16 @@ class Follow(models.Model):
         verbose_name='Подписан', )
 
     class Meta:
+        verbose_name = 'Follow'
+        verbose_name_plural = 'Follows'
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'following'),
                 name='unique_follow'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('following')),
+                name='check_not_self_follow',
             ),
         )
 
